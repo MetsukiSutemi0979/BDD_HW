@@ -3,7 +3,9 @@ package ru.netology.test;
 import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.Selenide;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestClassOrder;
 import org.openqa.selenium.chrome.ChromeOptions;
 import ru.netology.data.DataHelper;
 import ru.netology.page.DashboardPage;
@@ -29,7 +31,7 @@ public class MoneyTransferTest {
         //Configuration.browserCapabilities = options;
     }
 
-    @Test
+    @Test @Order(1)
     void testMoneyTransfer() {
         var info = getAuthInfo();
         var verificationCode = DataHelper.getVerificationCode(info);
