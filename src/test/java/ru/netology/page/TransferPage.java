@@ -22,4 +22,10 @@ public class TransferPage {
         return new TransferPage();
     }
 
+    public TransferPage transfer2(DataHelper.Cards card) {
+        amount.setValue("100");
+        from.setValue(card.getSecondCard());
+        confirm.click();
+        return new TransferPage();
+    }
 }

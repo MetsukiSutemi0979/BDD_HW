@@ -6,12 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 import ru.netology.data.DataHelper;
-import ru.netology.page.CardPage;
+import ru.netology.page.DashboardPage;
 import ru.netology.page.LoginPage;
 import ru.netology.page.TransferPage;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 import static ru.netology.data.DataHelper.getAuthInfo;
@@ -21,13 +18,15 @@ public class MoneyTransferTest {
 
     @BeforeEach
     void setUp() {
-        ChromeOptions options = new ChromeOptions();
-        options.addArguments("--start-maximized");
-        Map<String, Object> prefs = new HashMap<String, Object>();
-        prefs.put("credentials_enable_service", false);
-        prefs.put("password_manager_enables", false);
-        options.setExperimentalOption("prefs", prefs);
-        Configuration.browserCapabilities = options;
+        Configuration.browserCapabilities = new ChromeOptions().setBrowserVersion("115");
+
+        //ChromeOptions options = new ChromeOptions();
+        //options.addArguments("--start-maximized");
+        //Map<String, Object> prefs = new HashMap<String, Object>();
+        //prefs.put("credentials_enable_service", false);
+        //prefs.put("password_manager_enables", false);
+        //options.setExperimentalOption("prefs", prefs);
+        //Configuration.browserCapabilities = options;
     }
 
     @Test
@@ -38,15 +37,27 @@ public class MoneyTransferTest {
         var loginPage = new LoginPage();
         var verificationPage = loginPage.validLogin(info);
         var dashboardPage = verificationPage.validVerify(verificationCode);
-        var cardPage = new CardPage();
+        var cardPage = new DashboardPage();
         cardPage.clickTransfer();
         var transferPage = new TransferPage();
         var transfer = transferPage.transfer(getCards());
         cardPage.clickReload();
+        cardPage.checkBalance();
+    }
 
-
-
-
-
+    @Test
+    void testMoneyTransfer2() {
+        var info = getAuthInfo();
+        var verificationCode = DataHelper.getVerificationCode(info);
+        Selenide.open("http://localhost:9999");
+        var loginPage = new LoginPage();
+        var verificationPage = loginPage.validLogin(info);
+        var dashboardPage = verificationPage.validVerify(verificationCode);
+        var cardPage = new DashboardPage();
+        cardPage.clickTransfer2();
+        var transferPage = new TransferPage();
+        var transfer = transferPage.transfer2(getCards());
+        cardPage.clickReload();
+        cardPage.checkBalance2();
     }
 }
