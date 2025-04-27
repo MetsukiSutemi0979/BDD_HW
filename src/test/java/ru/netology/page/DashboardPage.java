@@ -3,28 +3,22 @@ package ru.netology.page;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
+import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 
+import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 public class DashboardPage {
     private final SelenideElement dashboard = $("[data-test-id=dashboard]");
-    private final SelenideElement card1 = $$("button[data-test-id='action-deposit']").get(0);
-    private final SelenideElement card2 = $$("button[data-test-id='action-deposit']").get(1);
     private final SelenideElement reload = $("[data-test-id=action-reload]");
-    private final SelenideElement card1Balance = $(Selectors.withText("**** **** **** 0001"));
-    private final SelenideElement card2Balance = $(Selectors.withText("**** **** **** 0002"));
 
-
-    public DashboardPage clickTransfer(){
-        card1.click();
-        return new DashboardPage();
-    }
-
-    public DashboardPage clickTransfer2(){
-        card2.click();
-        return new DashboardPage();
+    public TransferPage selectCardToTopUp(String cardLastDigits) {
+        $$(".list__item").findBy(text(cardLastDigits))
+                .$("button[data-test-id='action-deposit']")
+                .click();
+        return new TransferPage();
     }
 
     public DashboardPage clickReload(){
@@ -32,22 +26,30 @@ public class DashboardPage {
         return new DashboardPage();
     }
 
-    public DashboardPage checkBalance() {
-        card1Balance.shouldHave(Condition.exactText("**** **** **** 0001, баланс: 10000 р.\nПополнить"));
-        card2Balance.shouldHave(Condition.exactText("**** **** **** 0002, баланс: 10000 р.\nПополнить"));
-        return new DashboardPage();
+    public void checkCardBalance(String lastDigits, int expectedBalance) {
+        String text = $(Selectors.withText("**** **** **** " + lastDigits)).getText();
+        int actualBalance = extractBalance(text);
+        Assertions.assertEquals(expectedBalance, actualBalance);
     }
 
-    public DashboardPage checkBalance2(){
-        card2Balance.shouldHave(Condition.exactText("**** **** **** 0002, баланс: 10100 р.\nПополнить"));
-        card1Balance.shouldHave(Condition.exactText("**** **** **** 0001, баланс: 9900 р.\nПополнить"));
-        return new DashboardPage();
+    private int extractBalance(String text) {
+        String balance = text.substring(text.indexOf("баланс:") + 7, text.indexOf("р.")).trim();
+        return Integer.parseInt(balance.trim());
     }
-
-
 
     public DashboardPage() {
         dashboard.shouldBe(Condition.visible);
+    }
+
+    public void checkDashboard(){
+        Assertions.assertTrue(dashboard.isDisplayed());
+    }
+
+    public DashboardPage debugPrintAllCards() {
+        $$("[data-test-id=card]").forEach(el ->
+                System.out.println(">> CARD BLOCK TEXT:\n" + el.getText())
+        );
+        return this;
     }
 }
 

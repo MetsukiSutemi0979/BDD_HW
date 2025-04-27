@@ -14,21 +14,14 @@ import ru.netology.page.TransferPage;
 
 
 import static ru.netology.data.DataHelper.getAuthInfo;
-import static ru.netology.data.DataHelper.getCards;
+import static ru.netology.data.DataHelper.getFirstCard;
+import static ru.netology.data.DataHelper.getSecondCard;
 
 public class MoneyTransferTest {
 
     @BeforeEach
     void setUp() {
         Configuration.browserCapabilities = new ChromeOptions().setBrowserVersion("115");
-
-        //ChromeOptions options = new ChromeOptions();
-        //options.addArguments("--start-maximized");
-        //Map<String, Object> prefs = new HashMap<String, Object>();
-        //prefs.put("credentials_enable_service", false);
-        //prefs.put("password_manager_enables", false);
-        //options.setExperimentalOption("prefs", prefs);
-        //Configuration.browserCapabilities = options;
     }
 
     @Test @Order(1)
@@ -40,11 +33,15 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validLogin(info);
         var dashboardPage = verificationPage.validVerify(verificationCode);
         var cardPage = new DashboardPage();
-        cardPage.clickTransfer();
+        cardPage.checkDashboard();
+        cardPage.selectCardToTopUp("0002");
         var transferPage = new TransferPage();
-        var transfer = transferPage.transfer(getCards());
+        var firstCard = DataHelper.getFirstCard();
+        var secondCard = DataHelper.getSecondCard();
+        transferPage.transfer(100, firstCard.getNumber());
         cardPage.clickReload();
-        cardPage.checkBalance();
+        cardPage.checkCardBalance("0001", 9700);
+        cardPage.checkCardBalance("0002", 10300);
     }
 
     @Test
@@ -56,10 +53,13 @@ public class MoneyTransferTest {
         var verificationPage = loginPage.validLogin(info);
         var dashboardPage = verificationPage.validVerify(verificationCode);
         var cardPage = new DashboardPage();
-        cardPage.clickTransfer2();
+        cardPage.selectCardToTopUp("0001");
         var transferPage = new TransferPage();
-        var transfer = transferPage.transfer2(getCards());
+        var firstCard = DataHelper.getFirstCard();
+        var secondCard = DataHelper.getSecondCard();
+        transferPage.transfer(100, firstCard.getNumber());
         cardPage.clickReload();
-        cardPage.checkBalance2();
+        cardPage.checkCardBalance("0001", 9800);
+        cardPage.checkCardBalance("0002", 10200);
     }
 }

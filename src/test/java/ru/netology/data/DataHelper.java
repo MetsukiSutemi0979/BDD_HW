@@ -14,8 +14,12 @@ public class DataHelper {
         return new VerificationCode("12345");
     }
 
-    public static Cards getCards() {
-        return new Cards("5559 0000 0000 0002", "5559 0000 0000 0001");
+    public static CardInfo getFirstCard() {
+        return new CardInfo("5559 0000 0000 0001");
+    }
+
+    public static CardInfo getSecondCard() {
+        return new CardInfo("5559 0000 0000 0002");
     }
 
     @Value
@@ -30,8 +34,7 @@ public class DataHelper {
     }
 
     @Value
-    public static class Cards {
-        String firstCard;
-        String secondCard;
+    public static class CardInfo {
+        String number;
     }
 }
