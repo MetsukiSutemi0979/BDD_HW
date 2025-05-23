@@ -4,6 +4,8 @@ import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
 import ru.netology.data.DataHelper;
 
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -23,8 +25,8 @@ public class TransferPage {
         return new DashboardPage();
     }
 
-    public TransferPage errorNotification(){
-        error.shouldBe(Condition.visible);
-        return new TransferPage();
+    public void checkErrorNotification(String expectedText) {
+        error.shouldBe(visible)
+                .shouldHave(text(expectedText));
     }
 }

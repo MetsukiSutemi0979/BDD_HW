@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.openqa.selenium.WebDriver;
 
 import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Selectors.by;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -26,10 +27,9 @@ public class DashboardPage {
         return new DashboardPage();
     }
 
-    public void checkCardBalance(String lastDigits, int expectedBalance) {
+    public int getCardBalance(String lastDigits) {
         String text = $(Selectors.withText("**** **** **** " + lastDigits)).getText();
-        int actualBalance = extractBalance(text);
-        Assertions.assertEquals(expectedBalance, actualBalance);
+        return extractBalance(text);
     }
 
     private int extractBalance(String text) {
@@ -41,15 +41,5 @@ public class DashboardPage {
         dashboard.shouldBe(Condition.visible);
     }
 
-    public void checkDashboard(){
-        Assertions.assertTrue(dashboard.isDisplayed());
-    }
-
-    public DashboardPage debugPrintAllCards() {
-        $$("[data-test-id=card]").forEach(el ->
-                System.out.println(">> CARD BLOCK TEXT:\n" + el.getText())
-        );
-        return this;
-    }
 }
 

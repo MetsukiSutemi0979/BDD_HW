@@ -1,3 +1,4 @@
+
 package ru.netology.test;
 
 import com.codeborne.selenide.Configuration;
@@ -13,53 +14,35 @@ import ru.netology.page.LoginPage;
 import ru.netology.page.TransferPage;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static ru.netology.data.DataHelper.getAuthInfo;
 import static ru.netology.data.DataHelper.getFirstCard;
 import static ru.netology.data.DataHelper.getSecondCard;
 
 public class MoneyTransferTest {
 
-    @BeforeEach
-    void setUp() {
-        Configuration.browserCapabilities = new ChromeOptions().setBrowserVersion("115");
-    }
-
-    @Test @Order(1)
-    void testMoneyTransfer() {
-        var info = getAuthInfo();
-        var verificationCode = DataHelper.getVerificationCode(info);
-        Selenide.open("http://localhost:9999");
-        var loginPage = new LoginPage();
-        var verificationPage = loginPage.validLogin(info);
-        var dashboardPage = verificationPage.validVerify(verificationCode);
-        var cardPage = new DashboardPage();
-        cardPage.checkDashboard();
-        cardPage.selectCardToTopUp("0002");
-        var transferPage = new TransferPage();
-        var firstCard = DataHelper.getFirstCard();
-        var secondCard = DataHelper.getSecondCard();
-        transferPage.transfer(100, firstCard.getNumber());
-        cardPage.clickReload();
-        cardPage.checkCardBalance("0001", 9700);
-        cardPage.checkCardBalance("0002", 10300);
-    }
-
     @Test
-    void testMoneyTransfer2() {
+    void shouldTransferMoneyBetweenCards() {
         var info = getAuthInfo();
         var verificationCode = DataHelper.getVerificationCode(info);
         Selenide.open("http://localhost:9999");
         var loginPage = new LoginPage();
         var verificationPage = loginPage.validLogin(info);
         var dashboardPage = verificationPage.validVerify(verificationCode);
+
         var cardPage = new DashboardPage();
-        cardPage.selectCardToTopUp("0001");
-        var transferPage = new TransferPage();
-        var firstCard = DataHelper.getFirstCard();
-        var secondCard = DataHelper.getSecondCard();
-        transferPage.transfer(100, firstCard.getNumber());
-        cardPage.clickReload();
-        cardPage.checkCardBalance("0001", 9800);
-        cardPage.checkCardBalance("0002", 10200);
+
+        var firstCard = getFirstCard();
+        var secondCard = getSecondCard();
+
+        int initialFromBalance = cardPage.getCardBalance("0001");
+        int initialToBalance = cardPage.getCardBalance("0002");
+        int amount = 100;
+
+        cardPage.selectCardToTopUp("0002")
+                .transfer(amount, firstCard.getNumber());
+
+        assertEquals(initialFromBalance - amount, cardPage.getCardBalance("0001"));
+        assertEquals(initialToBalance + amount, cardPage.getCardBalance("0002"));
     }
 }

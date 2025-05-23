@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id("io.freefair.lombok") version "8.13.1"
 }
 
 group = 'ru.netology'
@@ -19,15 +20,18 @@ dependencies {
     testImplementation 'org.junit.platform:junit-platform-launcher:1.9.3'
     testImplementation 'com.codeborne:selenide:6.17.2'
     testImplementation 'io.github.bonigarcia:webdrivermanager:5.7.0'
-    compileOnly 'org.projectlombok:lombok:1.18.36'
-    annotationProcessor 'org.projectlombok:lombok:1.18.36'
-    testCompileOnly 'org.projectlombok:lombok:1.18.36'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
+
+    testCompileOnly("org.projectlombok:lombok:1.18.38")
+    testAnnotationProcessor("org.projectlombok:lombok:1.18.38")
 }
 
 test {
     useJUnitPlatform()
+    systemProperty 'selenide.headless', 'true'
     testLogging {
         showStandardStreams = true
     }
+    systemProperty 'chromeoptions.prefs', System.getProperty('chromeoptions.prefs', "profile.password_manager_leak_detection=false")
 }
